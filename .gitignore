@@ -1,3 +1,4 @@
+.cache
 *.class
 *.log
 
@@ -28,3 +29,4 @@ out
 RUNNING_PID
 .settings
 scaspell-api/*.iml
+/bin/

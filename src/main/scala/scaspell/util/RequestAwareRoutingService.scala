@@ -1,14 +1,9 @@
-package de.agilecoders.projects.scaspell.util
+package scaspell.util
 
-import com.twitter.finagle.http.{Response, Request}
+import com.twitter.finagle.httpx.{Response, Request}
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.service.RoutingService
+import com.twitter.finagle.httpx.service.RoutingService
 
-/**
- * TODO miha: document class purpose
- *
- * @author miha
- */
 object RequestAwareRoutingService {
     def byRequest[REQUEST <: Request](routes: PartialFunction[Request, Service[REQUEST, Response]]) =
         new RoutingService(

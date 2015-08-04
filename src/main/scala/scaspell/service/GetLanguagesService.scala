@@ -1,14 +1,9 @@
-package de.agilecoders.projects.scaspell.service
+package scaspell.service
 
-import de.agilecoders.projects.scaspell.api.Spellchecker
+import scaspell.api.Spellchecker
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.{Response, Request}
+import com.twitter.finagle.httpx.{Response, Request}
 
-/**
- * TODO miha: document class purpose
- *
- * @author miha
- */
 case class GetLanguagesService(spellchecker: Spellchecker) extends Service[Request, Response] {
 
     import spray.json._

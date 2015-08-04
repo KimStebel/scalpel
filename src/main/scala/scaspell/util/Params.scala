@@ -1,12 +1,7 @@
-package de.agilecoders.projects.scaspell.util
+package scaspell.util
 
 import org.jboss.netty.handler.codec.http.QueryStringDecoder
 
-/**
- * TODO miha: document class purpose
- *
- * @author miha
- */
 case class Params(private val uri: String) {
     private lazy val params = new QueryStringDecoder(uri).getParameters
 

@@ -1,23 +1,18 @@
-package de.agilecoders.projects.scaspell
+package scaspell
 
-import com.twitter.finagle.http._
+import com.twitter.finagle.httpx.{Http, Request, Method}
+import com.twitter.finagle.Httpx
 import java.net.InetSocketAddress
 import com.twitter.finagle.builder.ServerBuilder
-import com.twitter.finagle.http.service.RoutingService
-import com.twitter.finagle.http.path._
-import de.agilecoders.projects.scaspell.api.Aspell
-import de.agilecoders.projects.scaspell.util.RequestAwareRoutingService
-import de.agilecoders.projects.scaspell.service._
-import com.twitter.finagle.http.path./
-import com.twitter.finagle.http.RichHttp
+import com.twitter.finagle.httpx.service.RoutingService
+import com.twitter.finagle.httpx.path._
+import scaspell.api.Aspell
+import scaspell.util.RequestAwareRoutingService
+import scaspell.service._
+import com.twitter.finagle.httpx.path./
 
-/**
- * TODO miha: document class purpose
- *
- * @author miha
- */
 object Server extends App {
-    private lazy val root = Root / "api" / "v1"
+    private lazy val root = Root
     private lazy val spellchecker = Aspell()
     private lazy val getMethodService = GetModesService(spellchecker)
     private lazy val getLanguageService = GetLanguagesService(spellchecker)
@@ -26,7 +21,7 @@ object Server extends App {
     private lazy val badRequest = BadRequestService()
 
     val routing: RoutingService[Request] = RequestAwareRoutingService.byRequest[Request] {
-        case r: Request => (r.getMethod(), Path(r.path)) match {
+        case r: Request => (r.method, Path(r.path)) match {
             case Method.Get -> `root` / "mode" => getMethodService
             case Method.Get -> `root` / "language" => getLanguageService
             case Method.Get -> `root` / "version" => getVersionService
@@ -36,12 +31,9 @@ object Server extends App {
         }
         case _ => badRequest
     }
-
-    val httpServer = ServerBuilder()
-                     .codec(RichHttp[Request](Http()))
-                     .bindTo(new InetSocketAddress(8080))
-                     .name("scaspell-service")
-                     .build(routing)
+    
+    val httpServer = Httpx.serve(":8080", routing)
+    
 }
 
 

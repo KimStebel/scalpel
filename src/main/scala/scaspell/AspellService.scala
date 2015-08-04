@@ -1,19 +1,14 @@
-package de.agilecoders.projects.scaspell
+package scaspell
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.{Response, Request}
-import de.agilecoders.projects.scaspell.api.Aspell
+import com.twitter.finagle.httpx.{Response, Request}
+import scaspell.api.Aspell
 import com.twitter.util.Future
 import org.jboss.netty.handler.codec.http.HttpMethod
-import de.agilecoders.projects.scaspell.util.Params
 import spray.json._
-import DefaultJsonProtocol._
+import spray.json.DefaultJsonProtocol._
+import scala.collection.JavaConversions.asScalaBuffer
 
-/**
- * TODO miha: document class purpose
- *
- * @author miha
- */
 case class AspellService() extends Service[Request, Response] {
 
     import scala.collection.JavaConversions._
@@ -24,13 +19,11 @@ case class AspellService() extends Service[Request, Response] {
         val res = Response()
         res.setStatusCode(404)
 
-        req.getMethod() match {
-            case HttpMethod.GET => req.getUri() match {
+        req.method match {
+            case HttpMethod.GET => req.uri match {
                 case uri: String if uri.startsWith("/words") =>
-                    val params = Params(req.getUri())
-
                     req.getParams("q").toSeq match {
-                        case w: Seq[String] => aspell.checkWords(w, params.get("lang"), params.getInt("limit")) map {
+                        case w: Seq[String] => aspell.checkWords(w, Option(req.getParam("lang")), Option(req.getIntParam("limit"))) map {
                             words =>
                                 val content = words.toJson.compactPrint
                                 res.setContentString(content)
@@ -42,10 +35,8 @@ case class AspellService() extends Service[Request, Response] {
                         case _ => Future.value(res)
                     }
                 case uri: String if uri.startsWith("/html") =>
-                    val params = Params(req.getUri())
-
-                    params.get("q") match {
-                        case Some(html) => aspell.checkHtml(html, params.get("lang"), params.getInt("limit")) map {
+                    Option(req.getParam("q")) match {
+                        case Some(html) => aspell.checkHtml(html, Option(req.getParam("lang")), Option(req.getIntParam("limit"))) map {
                             words =>
                                 val content = words.toJson.compactPrint
                                 res.setContentString(content)
@@ -62,5 +53,3 @@ case class AspellService() extends Service[Request, Response] {
         }
     }
 }
-
-

@@ -2,7 +2,7 @@ name := "scaspell"
 
 version := "1.0"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.11.6"
 
 scalacOptions ++= Seq(
     "-deprecation",
@@ -17,6 +17,14 @@ scalacOptions ++= Seq(
     "-Xlint"
 )
 
+libraryDependencies ++= Seq(
+  "com.twitter" %% "finagle-httpx" % "6.27.0",
+  "com.twitter" %% "util-core" % "6.26.0",
+  "io.spray" %%  "spray-json" % "1.3.2",
+  "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+  "org.mockito" % "mockito-all" % "1.8.1" % "test"
+)
+
 // set correct java version
 javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
 
@@ -29,49 +37,9 @@ resolvers ++= Seq(
     Resolver.url("play-plugin-snapshots", new URL("http://repo.scala-sbt.org/scalasbt/sbt-plugin-snapshots/"))(Resolver.ivyStylePatterns)
 )
 
-publishMavenStyle := true
-
-publishTo := {
-    val nexus = "https://oss.sonatype.org/"
-    if (isSnapshot.value)
-        Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-        Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}
-
-publishArtifact in Test := false
-
-pomIncludeRepository := { _ => false }
-
-pomExtra := (
-    <url>https://github.com/l0rdn1kk0n/scaspell</url>
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    <scm>
-        <url>git@github.com:l0rdn1kk0n/scaspell.git</url>
-        <connection>scm:git:git@github.com:l0rdn1kk0n/scaspell.git</connection>
-        <developerConnection>scm:git:git@github.com:l0rdn1kk0n/scaspell.git</developerConnection>
-    </scm>
-    <developers>
-        <developer>
-            <id>miha</id>
-            <name>Michael Haitz</name>
-            <url>http://agilecoders.de</url>
-            <email>michael.haitz@agilecoders.de</email>
-            <organization>agilecoders.de</organization>
-            <roles>
-                <role>Owner</role>
-                <role>Comitter</role>
-            </roles>
-        </developer>
-    </developers>
-)
-
 licenses := Seq("Apache v2.0" -> url("http://opensource.org/licenses/Apache-2.0"))
 
-homepage := Some(url("https://github.com/l0rdn1kk0n/scaspell"))
+homepage := Some(url("https://github.com/kimstebel/scaspell"))
+
+Revolver.settings
+

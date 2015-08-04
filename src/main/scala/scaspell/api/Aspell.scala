@@ -1,12 +1,7 @@
-package de.agilecoders.projects.scaspell.api
+package scaspell.api
 
 import com.twitter.util.{Await, Future}
 
-/**
- * TODO miha: document class purpose
- *
- * @author miha
- */
 object Aspell {
 
 }
@@ -24,7 +19,7 @@ case class Aspell() extends Spellchecker {
     }
 
     def availableLanguages(filter: Option[String] = None): Future[Seq[String]] = Future {
-        val languages = Process("aspell dump dicts").lines.map(_.trim)
+        val languages = Process("aspell dump dicts").lineStream.map(_.trim)
 
         filter.map {
             case "main" =>
@@ -67,7 +62,7 @@ case class Aspell() extends Spellchecker {
         val aspell = s"aspell pipe --encoding=utf-8 $l $m"
         val grep = """grep -v "\*|\@|^$""""
 
-        val results = (echo #| aspell #| grep #| "uniq").lines_!
+        val results = (echo #| aspell #| grep #| "uniq").lineStream_!
 
         results.filter(r => !r.isEmpty && r(0) == '&')
         results.map(parse(_, limit.getOrElse(25))).filter(_.isDefined).map(_.get).toMap
@@ -79,7 +74,7 @@ case class Aspell() extends Spellchecker {
      * @return
      */
     override def availableModes() = Future {
-        "aspell --dump=modes".lines_!.map {
+        "aspell --dump=modes".lineStream_!.map {
             line =>
                 val s = line.split(" ", 2)
 

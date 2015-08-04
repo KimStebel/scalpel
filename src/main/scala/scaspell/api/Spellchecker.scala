@@ -1,34 +1,13 @@
-package de.agilecoders.projects.scaspell.api
+package scaspell.api
 
 import com.twitter.util.Future
 
-/**
- * TODO miha: document class purpose
- *
- * @author miha
- */
 trait Spellchecker {
 
-    /**
-     * Lists available modes
-     *
-     * @return
-     */
     def availableModes(): Future[Map[String, String]]
 
-    /**
-     * Lists available dictionaries
-     *
-     * @param filter
-     * @return
-     */
     def availableLanguages(filter: Option[String] = None): Future[Seq[String]]
 
-    /**
-     * Print version number of Aspell Library and Utility
-     *
-     * @return
-     */
     def version(): Future[String]
 
     /**
