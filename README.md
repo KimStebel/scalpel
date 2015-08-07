@@ -21,7 +21,7 @@ use
 ### spell checking
 
 ```shell
-curl -v -X POST -d 'you can\'t have it alll' \
+curl -v -X POST -d "you can\'t have it alll" \
 'http://localhost:8080/spelling/check?lang=en&mode=email&limit=5'
 ```
 
