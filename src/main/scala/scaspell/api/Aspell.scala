@@ -1,12 +1,13 @@
 package scaspell.api
 
 import com.twitter.util.{Await, Future}
+import com.typesafe.scalalogging.LazyLogging
 
 object Aspell {
 
 }
 
-case class Aspell() extends Spellchecker {
+case class Aspell() extends Spellchecker with LazyLogging {
 
     import scala.sys.process._
 
@@ -61,7 +62,8 @@ case class Aspell() extends Spellchecker {
         val echo = s"echo $f"
         val aspell = s"aspell pipe --encoding=utf-8 $l $m"
         val grep = """grep -v "\*|\@|^$""""
-
+        
+        logger.debug(s"calling aspell: $echo | $aspell | $grep | uniq")
         val results = (echo #| aspell #| grep #| "uniq").lineStream_!
 
         results.filter(r => !r.isEmpty && r(0) == '&')
@@ -113,7 +115,7 @@ object Strings {
     }
 
     def toHtml(html: String): String = {
-        html.replaceAll("|", " ")
+        html.replaceAll("\\|", " ")
     }
 
     def toLanguageParameter(lang: Option[String]): String = {

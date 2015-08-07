@@ -8,11 +8,12 @@ import com.twitter.finagle.httpx.service.RoutingService
 import com.twitter.finagle.httpx.path._
 import scaspell.api.Aspell
 import scaspell.util.RequestAwareRoutingService
-import scaspell.service._
+import scaspell.service.{GetModesService, GetLanguagesService, GetVersionService, CheckService, BadRequestService}
 import com.twitter.finagle.httpx.path./
+import com.twitter.util.Await
 
 object Server extends App {
-    private lazy val root = Root
+    private lazy val root = Root / "spelling"
     private lazy val spellchecker = Aspell()
     private lazy val getMethodService = GetModesService(spellchecker)
     private lazy val getLanguageService = GetLanguagesService(spellchecker)
@@ -26,14 +27,13 @@ object Server extends App {
             case Method.Get -> `root` / "language" => getLanguageService
             case Method.Get -> `root` / "version" => getVersionService
             case Method.Post -> `root` / "check" => checkService
-            case Method.Get -> `root` / "check" => checkService
             case _ => badRequest
         }
         case _ => badRequest
     }
     
     val httpServer = Httpx.serve(":8080", routing)
-    
+    Await.ready(httpServer)
 }
 
 

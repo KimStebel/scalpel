@@ -21,12 +21,16 @@ libraryDependencies ++= Seq(
   "com.twitter" %% "finagle-httpx" % "6.27.0",
   "com.twitter" %% "util-core" % "6.26.0",
   "io.spray" %%  "spray-json" % "1.3.2",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+  "ch.qos.logback" % "logback-classic" % "0.9.28",
   "org.scalatest" %% "scalatest" % "2.2.4" % "test",
   "org.mockito" % "mockito-all" % "1.8.1" % "test"
 )
 
 // set correct java version
 javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
+
+fork in run := true
 
 // Resolver
 resolvers ++= Seq(
