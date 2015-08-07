@@ -40,3 +40,23 @@ Here's what the output looks like:
   ]
 }
 ```
+
+### list installed languages
+
+```shell
+curl 'http://localhost:8080/spelling/languages'
+```
+
+### list aspell modes
+
+```shell
+curl 'http://localhost:8080/spelling/modes'
+```
+
+
+### get aspell version
+
+```shell
+curl 'http://localhost:8080/spelling/version'
+```
+

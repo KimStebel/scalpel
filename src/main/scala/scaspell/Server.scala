@@ -23,8 +23,8 @@ object Server extends App {
 
     val routing: RoutingService[Request] = RequestAwareRoutingService.byRequest[Request] {
         case r: Request => (r.method, Path(r.path)) match {
-            case Method.Get -> `root` / "mode" => getMethodService
-            case Method.Get -> `root` / "language" => getLanguageService
+            case Method.Get -> `root` / "modes" => getMethodService
+            case Method.Get -> `root` / "languages" => getLanguageService
             case Method.Get -> `root` / "version" => getVersionService
             case Method.Post -> `root` / "check" => checkService
             case _ => badRequest
