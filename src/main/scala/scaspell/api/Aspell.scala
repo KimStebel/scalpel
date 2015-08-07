@@ -34,8 +34,8 @@ case class Aspell() extends Spellchecker with LazyLogging {
     }
 
     def checkWords(words: Seq[String], lang: Option[String] = None, limit: Option[Int] = None): Future[Map[String, Seq[String]]] = Future {
-        exec(lang, limit) {
-            Strings.toWordsList(words)
+        exec(lang.getOrElse("en"), limit) {
+            words.mkString(" ")
         }
     }
 
@@ -48,16 +48,16 @@ case class Aspell() extends Spellchecker with LazyLogging {
     }
 
     def checkHtml(html: String, lang: Option[String] = None, limit: Option[Int] = None): Future[Map[String, Seq[String]]] = Future {
-        exec(lang, limit) {
+        exec(lang.getOrElse("en"), limit) {
             Strings.toHtml(html)
         }
     }
 
-    private def exec(lang: Option[String] = None,
+    private def exec(lang: String = "en",
                      limit: Option[Int] = None,
-                     mode:Option[String] = None)(f: => String): Map[String, Seq[String]] = {
-        val l = Strings.toLanguageParameter(lang.filter(_availableLanguages.contains))
-        val m = Strings.toModeParameter(mode.filter(_availableModes.contains))
+                     mode:String = "email")(f: => String): Map[String, Seq[String]] = {
+        val l = Strings.toLanguageParameter(lang)
+        val m = Strings.toModeParameter(mode)
 
         val echo = s"echo $f"
         val aspell = s"aspell pipe --encoding=utf-8 $l $m"
@@ -93,16 +93,8 @@ case class Aspell() extends Spellchecker with LazyLogging {
      * @param limit
      * @return
      */
-    override def check(input: String, mode: Option[String], lang: Option[String], limit: Option[Int]) = Future {
-        exec(lang, limit, mode) {
-            mode.map {
-                case "html" | "email" | "sgml" | "texinfo" | "perl" | "ccpp" |
-                     "nroff" | "tex" | "comment" | "url" | "none" =>
-                    Strings.toHtml(input)
-                case _ =>
-                    Strings.toWordsList(input.split(","))
-            }.getOrElse("")
-        }
+    override def check(input: String, mode: String, lang: String, limit: Option[Int]) = Future {
+        exec(lang, limit, mode) { Strings.toHtml(input) }
     }
 }
 
@@ -110,21 +102,13 @@ case class Aspell() extends Spellchecker with LazyLogging {
 
 object Strings {
 
-    def toWordsList(words: Seq[String]): String = {
-        words.map(_.replaceAll(",", " ").replaceAll("|", " ").trim).filter(!_.isEmpty).mkString(",")
-    }
-
     def toHtml(html: String): String = {
         html.replaceAll("\\|", " ")
     }
 
-    def toLanguageParameter(lang: Option[String]): String = {
-        lang.filter(!_.isEmpty).map(s => "--lang=" + s).getOrElse("")
-    }
+    def toLanguageParameter(lang: String): String = "--lang=" + lang
+    
 
-    def toModeParameter(lang: Option[String]): String = {
-        lang.filter(!_.isEmpty).map(s => "--mode=" + s).getOrElse("")
-    }
-
+    def toModeParameter(mode: String): String = "--mode=" + mode
 
 }

@@ -20,8 +20,8 @@ trait Spellchecker {
      * @return
      */
     def check(input: String,
-              mode: Option[String],
-              lang: Option[String] = None,
+              mode: String,
+              lang: String = "en",
               limit: Option[Int] = None): Future[Map[String, Seq[String]]]
 
     /**
