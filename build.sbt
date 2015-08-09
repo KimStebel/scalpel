@@ -47,3 +47,6 @@ homepage := Some(url("https://github.com/kimstebel/scaspell"))
 
 Revolver.settings
 
+mainClass in assembly := Some("scaspell.Server")
+
+assemblyJarName in assembly := "scaspell.jar"
