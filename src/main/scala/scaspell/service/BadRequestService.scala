@@ -8,8 +8,7 @@ case class BadRequestService() extends Service[Request, Response] {
 
     def apply(request: Request): Future[Response] = Future {
         val res = Response()
-        res.setStatusCode(402)
-
+        res.setStatusCode(404)
         res
     }
     
