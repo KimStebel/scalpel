@@ -1,3 +1,6 @@
 #!/bin/bash
 
+revision="$(git rev-list --max-count=1 HEAD)"
+/home/gb111570/opt/sbt/bin/sbt assembly
+sed "s/{{REVISION}}/$revision/" Dockerfile-Template >Dockerfile
 docker build -t='kimstebel/scaspell' .
