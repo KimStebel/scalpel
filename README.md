@@ -1,5 +1,7 @@
-scaspell
-========
+Scalpel
+=======
+
+a REST service for doing QA checks on documentation content 
 
 build
 -----
