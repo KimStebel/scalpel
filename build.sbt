@@ -1,4 +1,4 @@
-name := "scaspell"
+name := "scapel"
 
 version := "1.0"
 
