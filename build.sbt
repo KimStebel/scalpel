@@ -22,8 +22,10 @@ libraryDependencies ++= Seq(
   "io.spray" %%  "spray-json" % "1.3.2",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "ch.qos.logback" % "logback-classic" % "0.9.28",
+  "org.pegdown" % "pegdown" % "1.5.0",
   "org.scalatest" %% "scalatest" % "2.2.4" % "test",
-  "org.mockito" % "mockito-all" % "1.8.1" % "test"
+  "org.mockito" % "mockito-all" % "1.8.1" % "test",
+  "default" %% "actuarius" % "0.2.7-SNAPSHOT"
 )
 
 // set correct java version
