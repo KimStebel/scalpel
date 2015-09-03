@@ -37,4 +37,14 @@ class SpellcheckerSpec extends FlatSpec with Matchers {
     val r = await(aspell.version())
     r should not be empty
   }
+  
+  it should "be able to use a custom dictionary" in {
+    val errors = await(aspell.check("CouchDB is cool.", "email", "en", customDictionary = Seq("CouchDB")))
+    errors shouldBe empty
+    val errors2 = await(aspell.check("Abcdef.", "email", "en", customDictionary = Seq("Abcdef")))
+    errors2 shouldBe empty
+    val errors3 = await(aspell.check("Cloudant isn't CouchDB.", "email", "en", customDictionary = Seq("CouchDB Cloudant")))
+    errors3 shouldBe empty
+    
+  }
 }

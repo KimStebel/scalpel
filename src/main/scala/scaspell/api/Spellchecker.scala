@@ -22,7 +22,8 @@ trait Spellchecker {
     def check(input: String,
               mode: String,
               lang: String = "en",
-              limit: Option[Int] = None): Future[Map[String, Seq[String]]]
+              limit: Option[Int] = None,
+              customDictionary: Seq[String] = Seq()): Future[Map[String, Seq[String]]]
 
     /**
      * Produce a list of misspelled words

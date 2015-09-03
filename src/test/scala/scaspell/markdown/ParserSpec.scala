@@ -129,6 +129,7 @@ This is the second paragraph. It has just one line.
 And finally we have some *text* with **strong emphasis** and inline `code`.
 """
     val res = scaspell.markdown.Parser.mdToDita(md)
+    println(res)
     res.split("\n").size should equal(md.split("\n").size)
     
   }

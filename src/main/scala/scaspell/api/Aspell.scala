@@ -2,6 +2,7 @@ package scaspell.api
 
 import com.twitter.util.{Await, Future}
 import com.typesafe.scalalogging.LazyLogging
+import java.io.File
 
 object Aspell {
 
@@ -52,22 +53,34 @@ case class Aspell() extends Spellchecker with LazyLogging {
             Strings.toHtml(html)
         }
     }
+    
+    private def writeDict(file:String, cd:Seq[String]) {
+      val p = new java.io.PrintWriter(new File(file))
+      try { 
+        p.println("personal_ws-1.1 en 2 utf-8")
+        for (word <- cd) {
+          p.println(word)
+        }
+      } finally { p.close() }
+    }
 
     private def exec(lang: String = "en",
                      limit: Option[Int] = None,
-                     mode:String = "email")(f: => String): Map[String, Seq[String]] = {
+                     mode:String = "email",
+                     customDictionary:Seq[String] = Seq())(f: => String): Map[String, Seq[String]] = {
         val l = Strings.toLanguageParameter(lang)
         val m = Strings.toModeParameter(mode)
 
-        val echo = s"echo $f"
-        val aspell = s"aspell pipe --encoding=utf-8 $l $m"
+        val echo = s"""echo $f"""
+        val aspell = s"aspell pipe --encoding=utf-8 $l $m --add-extra-dicts ${System.getProperty("user.dir")}/dictionary"
         val grep = """grep -v "\*|\@|^$""""
         
         logger.debug(s"calling aspell: $echo | $aspell | $grep | uniq")
-        val results = (echo #| aspell #| grep #| "uniq").lineStream_!
-
+        writeDict("dictionary", customDictionary)
+        val results = (echo #| aspell #| grep #| "uniq").lineStream_!.toSeq
+        
         results.filter(r => !r.isEmpty && r(0) == '&')
-        results.map(parse(_, limit.getOrElse(25))).filter(_.isDefined).map(_.get).toMap
+        results.map(parse(_, limit.getOrElse(25))).flatMap(x=>x).toMap
     }
 
     /**
@@ -93,8 +106,8 @@ case class Aspell() extends Spellchecker with LazyLogging {
      * @param limit
      * @return
      */
-    override def check(input: String, mode: String, lang: String, limit: Option[Int]) = Future {
-        exec(lang, limit, mode) { Strings.toHtml(input) }
+    override def check(input: String, mode: String, lang: String, limit: Option[Int], customDictionary: Seq[String]) = Future {
+        exec(lang, limit, mode, customDictionary) { Strings.toHtml(input) }
     }
 }
 
